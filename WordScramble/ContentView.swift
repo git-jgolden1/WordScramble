@@ -7,37 +7,50 @@
 
 import SwiftUI
 
-struct myTimer: View {
+var isTimerRunning = false
+var startTime =  Date()
+var timerString = "0.00"
+
+struct MyTimer: View {
 	@State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-	@State private var timeRemaining = 10
+	@State private var timeRemaining = 30
+	
 	@State private var gameStatusMessage = " "
 	@State private var isShowingMessage = false
 	@State private var message = ""
 	
-	let timerIncreaseAmount = 15
-	let timerDecreaseAmount = 10
+	private let timerIncreaseAmount = 15
 	
 	var body: some View {
 		Text("\(timeRemaining)")
 			.onReceive(timer) { _ in
-				if timeRemaining > 0 {
-					timeRemaining -= 1
-				} else if timeRemaining <= 0 {
-					timeRemaining = 0
-					timer.upstream.connect().cancel()
-					gameOver()
+				if isTimerRunning {
+					timerString = String(format: "%.2f", (Date().timeIntervalSince(startTime)))
+					if timeRemaining > 0 {
+						timeRemaining -= 1
+					} else if timeRemaining <= 0 {
+						timeRemaining = 0
+						timer.upstream.connect().cancel()
+						gameOver()
+					}
 				}
+				
 			}
+	}
+	
+	func increment() {
+		if timeRemaining > 0 {
+			timeRemaining += timerIncreaseAmount
+		}
 	}
 	
 	func gameOver() {
 		print("Game over")
-
+		
 	}
 	
 	
 }
-
 
 struct ContentView: View {
 	
@@ -54,6 +67,7 @@ struct ContentView: View {
 	@State private var showingWordError = false
 	
 	private let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!", "Okie dokie artichokie!", "Shore bud", "Niiiiice"]
+	private var myTimer = MyTimer()
 	
 	var body: some View {
 		NavigationView {
@@ -76,7 +90,13 @@ struct ContentView: View {
 					
 				}
 				.alert(isPresented: $showingGameInstructions) {
-					Alert(title: Text("Game instructions"), message: Text("Make as many words using existing letters from given word! \nScore goes up for each letter formed by your word. \nScore is decreased by 1 when a rule is broken. \n1. Words must be at least 3 letters long\n2. Words must each be unique\n3. Words must be actual words"), dismissButton: .default(Text("Cool, let's play!")))
+					Alert(title: Text("Game instructions"), message: Text("Make as many words using existing letters from given word! \nScore goes up for each letter formed by your word. \nScore is decreased by 1 when a rule is broken. \n1. Words must be at least 3 letters long\n2. Words must each be unique\n3. Words must be actual words"), dismissButton: .default(Text("Cool, let's play!")) {
+						if !isTimerRunning {
+							timerString = "0.00"
+							startTime = Date()
+						}
+						isTimerRunning.toggle()
+					})
 				}
 				
 				List(usedWords, id: \.self) {
@@ -95,7 +115,7 @@ struct ContentView: View {
 			}
 			.navigationBarItems(
 				trailing:
-					myTimer()
+					myTimer
 			)
 		}
 	}
@@ -128,6 +148,7 @@ struct ContentView: View {
 		
 		usedWords.insert(answer, at: 0)
 		score += answer.count
+		myTimer.increment()
 		newWord = ""
 	}
 	
@@ -189,7 +210,6 @@ struct ContentView: View {
 	func gameInstructions() {
 		showingGameInstructions = true
 	}
-	
 	
 }
 
