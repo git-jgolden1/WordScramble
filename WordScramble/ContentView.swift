@@ -20,7 +20,7 @@ struct MyTimer: View {
 	@State private var message = ""
 	
 	private let timerIncreaseAmount = 15
-	
+		
 	var body: some View {
 		Text("\(timeRemaining)")
 			.onReceive(timer) { _ in
@@ -34,7 +34,6 @@ struct MyTimer: View {
 						gameOver()
 					}
 				}
-				
 			}
 	}
 	
@@ -65,9 +64,10 @@ struct ContentView: View {
 	@State private var errorTitle = ""
 	@State private var errorMessage = ""
 	@State private var showingWordError = false
+
+	private var myTimer = MyTimer()
 	
 	private let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!", "Okie dokie artichokie!", "Shore bud", "Niiiiice"]
-	private var myTimer = MyTimer()
 	
 	var body: some View {
 		NavigationView {
