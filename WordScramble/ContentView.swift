@@ -11,12 +11,13 @@ var isTimerRunning = false
 var startTime =  Date()
 var timerString = "0.00"
 
+let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!",
+						  "Okie dokie artichokie!", "Shore bud", "Niiiiice", "Aw fetch!"]
+
 struct MyTimer: View {
 	@State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-	@State private var timeRemaining = 30
+	@State private var timeRemaining = 10
 	
-	@State private var gameStatusMessage = " "
-	@State private var isShowingMessage = false
 	@State private var message = ""
 	
 	private let timerIncreaseAmount = 15
@@ -43,11 +44,6 @@ struct MyTimer: View {
 		}
 	}
 	
-	func gameOver() {
-		print("Game over")
-		
-	}
-	
 	
 }
 
@@ -66,8 +62,6 @@ struct ContentView: View {
 	@State private var showingWordError = false
 
 	private var myTimer = MyTimer()
-	
-	private let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!", "Okie dokie artichokie!", "Shore bud", "Niiiiice"]
 	
 	var body: some View {
 		NavigationView {
@@ -148,7 +142,7 @@ struct ContentView: View {
 		
 		usedWords.insert(answer, at: 0)
 		score += answer.count
-		myTimer.increment()
+		//myTimer.increment()
 		newWord = ""
 	}
 	
@@ -179,7 +173,7 @@ struct ContentView: View {
 	}
 	
 	func isLongEnough(word: String) -> Bool {
-		return word.count >= 3
+		word.count >= 3
 	}
 	
 	func wordError(title: String, message: String) {

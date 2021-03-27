@@ -14,6 +14,7 @@
 		D7B1050525D2499200E47196 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7B1050425D2499200E47196 /* Assets.xcassets */; };
 		D7B1050825D2499200E47196 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7B1050725D2499200E47196 /* Preview Assets.xcassets */; };
 		D7B1050B25D2499200E47196 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7B1050925D2499200E47196 /* LaunchScreen.storyboard */; };
+		D7CE2F73260F018A008E628C /* ToDo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CE2F72260F018A008E628C /* ToDo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		D7B1050725D2499200E47196 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D7B1050A25D2499200E47196 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D7B1050C25D2499200E47196 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D7CE2F72260F018A008E628C /* ToDo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +63,7 @@
 				D7B104FE25D2498D00E47196 /* AppDelegate.swift */,
 				D7B1050025D2498D00E47196 /* SceneDelegate.swift */,
 				D7B1050225D2498D00E47196 /* ContentView.swift */,
+				D7CE2F72260F018A008E628C /* ToDo.swift */,
 				D776895925F88625005E59C1 /* start.txt */,
 				D7B1050425D2499200E47196 /* Assets.xcassets */,
 				D7B1050925D2499200E47196 /* LaunchScreen.storyboard */,
@@ -152,6 +155,7 @@
 				D7B104FF25D2498D00E47196 /* AppDelegate.swift in Sources */,
 				D7B1050125D2498D00E47196 /* SceneDelegate.swift in Sources */,
 				D7B1050325D2498D00E47196 /* ContentView.swift in Sources */,
+				D7CE2F73260F018A008E628C /* ToDo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
