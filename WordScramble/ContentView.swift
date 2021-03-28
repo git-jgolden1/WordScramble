@@ -16,14 +16,15 @@ struct ContentView: View {
 	
 	@State private var usedWords = [String]()
 	@State private var rootWord = ""
-	@State private var newWord = ""
+	@State private var userWord = ""
 	
 	@State private var score = 0
 	@State private var highScore = 0
 	@State private var scoreMessage = ""
-
+	
 	@State private var showingGameInstructions = false
 	@State private var showingGameOver = false
+	@State private var showingNewWordAskConfirmation = false
 	
 	@State private var errorTitle = ""
 	@State private var errorMessage = ""
@@ -34,29 +35,34 @@ struct ContentView: View {
 	@State private var timerString = "0.00"
 	@State private var startTime =  Date()
 	@State private var isTimerRunning = false
-
+	
 	private let timerBeginningTime = 60 //set to whatever timeRemaining is. But you can't just start them equal to each other
 	private let timerIncreaseAmount = 15
 	
 	private let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!",
-														"Okie dokie artichokie!", "Shore bud", "¡Cállate!", "Aw fetch!"]
+																		"Okie dokie artichokie!", "Shore bud", "¡Cállate!", "Aw fetch!"]
 	
 	var body: some View {
 		NavigationView {
 			VStack {
 				HStack {
 					Button("New word") {
-						score = 0
-						nextWord()
+						showingNewWordAskConfirmation = true
 					}
 					.foregroundColor(.green)
 					.padding()
+//					.alert(isPresented: $showingNewWordAskConfirmation) {
+//						Alert(title: Text("Warning: This will erase your score"), message: Text("Are you sure you want to add a new word?"), primaryButton: .default(Text("Yes")) {
+//							newWord()
+//						}, secondaryButton: .cancel(Text("No")))
+//					}
+					//above commented code not working yet for some reason
 					
-					TextField("Enter your word", text: $newWord, onCommit: addNewWord)
+					
+					TextField("Enter your word", text: $userWord, onCommit: addNewWordToList)
 						.textFieldStyle(RoundedBorderTextFieldStyle())
 						.autocapitalization(.none)
-						.padding()
-					
+						
 					VStack {
 						Text("High Score: \(highScore)")
 							.foregroundColor(.purple)
@@ -90,7 +96,7 @@ struct ContentView: View {
 					let randomInt = Int.random(in: 0..<funnyDismissButton.count)
 					return Alert(title: Text(errorTitle), message: Text(errorMessage), dismissButton: .default(Text(funnyDismissButton[randomInt])))
 				}
-								
+				
 			}
 			.navigationBarItems(
 				trailing:
@@ -111,19 +117,27 @@ struct ContentView: View {
 					.alert(isPresented: $showingGameOver) {
 						
 						Alert(title: Text("Game Over..."), message: Text("You ran out of time. \n\(scoreMessage)"), dismissButton: .default(Text(funnyDismissButton[Int.random(in: 0..<funnyDismissButton.count)])) {
-								score = 0
-								newWord = ""
-								nextWord()
-								timer = MyTimer()
-								timeRemaining = 60
+							score = 0
+							userWord = ""
+							nextWord()
+							timer = MyTimer()
+							timeRemaining = 60
 						})
 					})
 		}
 		
 	}
 	
-	func addNewWord() {
-		let answer = newWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+	func newWord() {
+		showingNewWordAskConfirmation = true
+		score = 0
+		timer = MyTimer()
+		timeRemaining = 60
+		nextWord()
+	}
+	
+	func addNewWordToList() {
+		let answer = userWord.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
 		guard answer.count > 0 else {
 			return
 		}
@@ -151,7 +165,7 @@ struct ContentView: View {
 		usedWords.insert(answer, at: 0)
 		score += answer.count
 		incrementTimer()
-		newWord = ""
+		userWord = ""
 	}
 	
 	func isOriginal(word: String) -> Bool {
@@ -236,3 +250,4 @@ struct ContentView_Previews: PreviewProvider {
 		ContentView()
 	}
 }
+
