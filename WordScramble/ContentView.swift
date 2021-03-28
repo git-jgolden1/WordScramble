@@ -49,7 +49,8 @@ struct ContentView: View {
 			VStack {
 				HStack {
 					Button("New word") {
-						showingNewWordAskConfirmation = true
+						newWord()
+//						showingNewWordAskConfirmation = true
 					}
 					.foregroundColor(.green)
 					.padding()
