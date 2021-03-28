@@ -150,7 +150,7 @@ struct ContentView: View {
 		
 		usedWords.insert(answer, at: 0)
 		score += answer.count
-		//myTimer.increment()
+		incrementTimer()
 		newWord = ""
 	}
 	
@@ -193,6 +193,7 @@ struct ContentView: View {
 	
 	func incrementTimer() {
 		if timeRemaining > 0 {
+			timer = MyTimer()
 			timeRemaining += timerIncreaseAmount
 		}
 	}
