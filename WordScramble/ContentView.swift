@@ -7,45 +7,6 @@
 
 import SwiftUI
 
-var isTimerRunning = false
-var startTime =  Date()
-var timerString = "0.00"
-
-let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!",
-						  "Okie dokie artichokie!", "Shore bud", "Niiiiice", "Aw fetch!"]
-
-struct MyTimer: View {
-	@State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-	@State private var timeRemaining = 10
-	
-	@State private var message = ""
-	
-	private let timerIncreaseAmount = 15
-		
-	var body: some View {
-		Text("\(timeRemaining)")
-			.onReceive(timer) { _ in
-				if isTimerRunning {
-					timerString = String(format: "%.2f", (Date().timeIntervalSince(startTime)))
-					if timeRemaining > 0 {
-						timeRemaining -= 1
-					} else if timeRemaining <= 0 {
-						timeRemaining = 0
-						timer.upstream.connect().cancel()
-						gameOver()
-					}
-				}
-			}
-	}
-	
-	func increment() {
-		if timeRemaining > 0 {
-			timeRemaining += timerIncreaseAmount
-		}
-	}
-	
-	
-}
 
 struct ContentView: View {
 	
@@ -60,8 +21,19 @@ struct ContentView: View {
 	@State private var errorTitle = ""
 	@State private var errorMessage = ""
 	@State private var showingWordError = false
+	
+	@State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+	@State private var timeRemaining = 10
+	@State private var message = ""
+	
+	@State private var timerString = "0.00"
+	@State private var startTime =  Date()
+	@State private var isTimerRunning = false
 
-	private var myTimer = MyTimer()
+	private let timerIncreaseAmount = 15
+	
+	private let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!",
+														"Okie dokie artichokie!", "Shore bud", "Niiiiice", "Aw fetch!"]
 	
 	var body: some View {
 		NavigationView {
@@ -109,7 +81,19 @@ struct ContentView: View {
 			}
 			.navigationBarItems(
 				trailing:
-					myTimer
+					Text("\(timeRemaining)")
+					.onReceive(timer) { _ in
+						if isTimerRunning {
+							timerString = String(format: "%.2f", (Date().timeIntervalSince(startTime)))
+							if timeRemaining > 0 {
+								timeRemaining -= 1
+							} else if timeRemaining <= 0 {
+								timeRemaining = 0
+								timer.upstream.connect().cancel()
+//								gameOver()
+							}
+						}
+					}
 			)
 		}
 	}
@@ -181,6 +165,12 @@ struct ContentView: View {
 		errorMessage = message + "\n" + "score decremented"
 		showingWordError = true
 		score -= 1
+	}
+	
+	func incrementTimer() {
+		if timeRemaining > 0 {
+			timeRemaining += timerIncreaseAmount
+		}
 	}
 	
 	func startGame() {
