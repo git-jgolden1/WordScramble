@@ -7,7 +7,7 @@
 
 /*
 	To Do:
-	-Make game over end game and show score
+	-Fix endless dismiss messages bug
 	-Make new word ask confirmation (newWordConfirmationAlert)
 	-Fix sideways rotation bug
 */

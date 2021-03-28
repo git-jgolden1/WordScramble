@@ -10,13 +10,17 @@ import SwiftUI
 
 struct ContentView: View {
 	
+	struct MyTimer {
+		var value = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+	}
+	
 	@State private var usedWords = [String]()
 	@State private var rootWord = ""
 	@State private var newWord = ""
 	
 	@State private var score = 0
 	@State private var highScore = 0
-	@State private var highScoreMessage = ""
+	@State private var scoreMessage = ""
 
 	@State private var showingGameInstructions = false
 	@State private var showingGameOver = false
@@ -25,18 +29,17 @@ struct ContentView: View {
 	@State private var errorMessage = ""
 	@State private var showingWordError = false
 	
-	@State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-	@State private var timeRemaining = 10
-	
+	@State private var timeRemaining = 60
+	@State private var timer = MyTimer()
 	@State private var timerString = "0.00"
 	@State private var startTime =  Date()
 	@State private var isTimerRunning = false
 
-	private let timerBeginningTime = 10
+	private let timerBeginningTime = 60 //set to whatever timeRemaining is. But you can't just start them equal to each other
 	private let timerIncreaseAmount = 15
 	
 	private let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!",
-														"Okie dokie artichokie!", "Shore bud", "Niiiiice", "Aw fetch!"]
+														"Okie dokie artichokie!", "Shore bud", "¡Cállate!", "Aw fetch!"]
 	
 	var body: some View {
 		NavigationView {
@@ -70,7 +73,7 @@ struct ContentView: View {
 							timerString = "0.00"
 							startTime = Date()
 						}
-						isTimerRunning = true
+						isTimerRunning.toggle()
 					})
 				}
 				
@@ -84,14 +87,15 @@ struct ContentView: View {
 					nextWord()
 				}
 				.alert(isPresented: $showingWordError) {
-					Alert(title: Text(errorTitle), message: Text(errorMessage), dismissButton: .default(Text(funnyDismissButton[Int.random(in: 0..<funnyDismissButton.count)])))
+					let randomInt = Int.random(in: 0..<funnyDismissButton.count)
+					return Alert(title: Text(errorTitle), message: Text(errorMessage), dismissButton: .default(Text(funnyDismissButton[randomInt])))
 				}
-				
+								
 			}
 			.navigationBarItems(
 				trailing:
 					Text("\(timeRemaining)")
-					.onReceive(timer) { _ in
+					.onReceive(timer.value) { _ in
 						if isTimerRunning {
 							timerString = String(format: "%.2f", (Date().timeIntervalSince(startTime)))
 							if timeRemaining > 0 {
@@ -99,20 +103,23 @@ struct ContentView: View {
 							} else if timeRemaining <= 0 {
 								timeRemaining = 0
 								showingWordError = false
-								timer.upstream.connect().cancel()
+								timer.value.upstream.connect().cancel()
 								gameOver()
 							}
 						}
 					}
 					.alert(isPresented: $showingGameOver) {
 						
-						Alert(title: Text("Game Over..."), message: Text("\(highScoreMessage)You ran out of time. \nYour score was \(score)"), dismissButton: .default(Text(funnyDismissButton[Int.random(in: 0..<funnyDismissButton.count)])) {
+						Alert(title: Text("Game Over..."), message: Text("You ran out of time. \n\(scoreMessage)"), dismissButton: .default(Text(funnyDismissButton[Int.random(in: 0..<funnyDismissButton.count)])) {
 								score = 0
 								newWord = ""
 								nextWord()
+								timer = MyTimer()
+								timeRemaining = 60
 						})
 					})
 		}
+		
 	}
 	
 	func addNewWord() {
@@ -214,9 +221,9 @@ struct ContentView: View {
 	func gameOver() {
 		if score > highScore {
 			highScore = score
-			highScoreMessage = "New High Score: \(highScore)!\n"
+			scoreMessage = "New High Score: \(highScore)!"
 		} else {
-			highScoreMessage = ""
+			scoreMessage = "Your score was: \(score)"
 		}
 		showingGameOver = true
 	}
