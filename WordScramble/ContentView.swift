@@ -15,8 +15,11 @@ struct ContentView: View {
 	@State private var newWord = ""
 	
 	@State private var score = 0
-	
+	@State private var highScore = 0
+	@State private var highScoreMessage = ""
+
 	@State private var showingGameInstructions = false
+	@State private var showingGameOver = false
 	
 	@State private var errorTitle = ""
 	@State private var errorMessage = ""
@@ -24,12 +27,12 @@ struct ContentView: View {
 	
 	@State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 	@State private var timeRemaining = 10
-	@State private var message = ""
 	
 	@State private var timerString = "0.00"
 	@State private var startTime =  Date()
 	@State private var isTimerRunning = false
 
+	private let timerBeginningTime = 10
 	private let timerIncreaseAmount = 15
 	
 	private let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!",
@@ -40,7 +43,8 @@ struct ContentView: View {
 			VStack {
 				HStack {
 					Button("New word") {
-						startGame()
+						score = 0
+						nextWord()
 					}
 					.foregroundColor(.green)
 					.padding()
@@ -50,10 +54,15 @@ struct ContentView: View {
 						.autocapitalization(.none)
 						.padding()
 					
-					Text("Score: \(score)")
-						.foregroundColor(.orange)
-						.padding()
-					
+					VStack {
+						Text("High Score: \(highScore)")
+							.foregroundColor(.purple)
+						
+						Text("Score: \(score)")
+							.foregroundColor(.orange)
+						
+					}
+					.padding()
 				}
 				.alert(isPresented: $showingGameInstructions) {
 					Alert(title: Text("Game instructions"), message: Text("Make as many words using existing letters from given word! \nScore goes up for each letter formed by your word. \nScore is decreased by 1 when a rule is broken. \n1. Words must be at least 3 letters long\n2. Words must each be unique\n3. Words must be actual words"), dismissButton: .default(Text("Cool, let's play!")) {
@@ -61,7 +70,7 @@ struct ContentView: View {
 							timerString = "0.00"
 							startTime = Date()
 						}
-						isTimerRunning.toggle()
+						isTimerRunning = true
 					})
 				}
 				
@@ -72,7 +81,7 @@ struct ContentView: View {
 				.navigationBarTitle(rootWord)
 				.onAppear {
 					gameInstructions()
-					startGame()
+					nextWord()
 				}
 				.alert(isPresented: $showingWordError) {
 					Alert(title: Text(errorTitle), message: Text(errorMessage), dismissButton: .default(Text(funnyDismissButton[Int.random(in: 0..<funnyDismissButton.count)])))
@@ -89,12 +98,20 @@ struct ContentView: View {
 								timeRemaining -= 1
 							} else if timeRemaining <= 0 {
 								timeRemaining = 0
+								showingWordError = false
 								timer.upstream.connect().cancel()
-//								gameOver()
+								gameOver()
 							}
 						}
 					}
-			)
+					.alert(isPresented: $showingGameOver) {
+						
+						Alert(title: Text("Game Over..."), message: Text("\(highScoreMessage)You ran out of time. \nYour score was \(score)"), dismissButton: .default(Text(funnyDismissButton[Int.random(in: 0..<funnyDismissButton.count)])) {
+								score = 0
+								newWord = ""
+								nextWord()
+						})
+					})
 		}
 	}
 	
@@ -173,8 +190,7 @@ struct ContentView: View {
 		}
 	}
 	
-	func startGame() {
-		score = 0
+	func nextWord() {
 		
 		if usedWords.count > 0 {
 			usedWords = [String]()
@@ -193,6 +209,16 @@ struct ContentView: View {
 	
 	func gameInstructions() {
 		showingGameInstructions = true
+	}
+	
+	func gameOver() {
+		if highScore > score {
+			highScoreMessage = "\(highScore)\n"
+			highScore = score
+		} else {
+			highScoreMessage = ""
+		}
+		showingGameOver = true
 	}
 	
 }
