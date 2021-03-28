@@ -212,8 +212,8 @@ struct ContentView: View {
 	}
 	
 	func gameOver() {
-		if highScore > score {
-			highScoreMessage = "\(highScore)\n"
+		if score > highScore {
+			highScoreMessage = "New High Score: \(highScore)!\n"
 			highScore = score
 		} else {
 			highScoreMessage = ""
