@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import Introspect
 
 var randomInt = Int.random(in: 0 ..< funnyDismissButton.count)
 let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!", "Okie dokie artichokie!", "Shore bud", "¡Cállate!", "Aw fetch!"]
 
+let startingTime = 30
 
 struct ContentView: View {
 	
@@ -33,14 +35,14 @@ struct ContentView: View {
 	@State private var errorMessage = ""
 	@State private var showingWordError = false
 	
-	@State private var timeRemaining = 30
+	@State private var timeRemaining = startingTime
 	@State private var timer = MyTimer()
 	@State private var timerString = "0.00"
 	@State private var startTime =  Date()
 	@State private var isTimerRunning = false
 	
 
-	private let timerIncreaseAmount = 10
+	private let timerIncreaseAmount = 5
 	
 	var body: some View {
 		NavigationView {
@@ -61,6 +63,11 @@ struct ContentView: View {
 					
 					
 					TextField("Enter your word", text: $userWord, onCommit: addNewWordToList)
+						.introspectTextField { textField in
+							if !showingGameOver && !showingWordError && !showingGameInstructions {
+								textField.becomeFirstResponder()
+							}
+						}
 						.textFieldStyle(RoundedBorderTextFieldStyle())
 						.autocapitalization(.none)
 						
@@ -121,7 +128,7 @@ struct ContentView: View {
 								userWord = ""
 								nextWord()
 								timer = MyTimer()
-								timeRemaining = 60
+								timeRemaining = startingTime
 						})
 					})
 		}
@@ -132,7 +139,7 @@ struct ContentView: View {
 		showingNewWordAskConfirmation = true
 		score = 0
 		timer = MyTimer()
-		timeRemaining = 60
+		timeRemaining = 30
 		nextWord()
 	}
 	

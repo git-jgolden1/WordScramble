@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D76A9CB1261222ED00A9C210 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = D76A9CB0261222ED00A9C210 /* Introspect */; };
 		D776895A25F88625005E59C1 /* start.txt in Resources */ = {isa = PBXBuildFile; fileRef = D776895925F88625005E59C1 /* start.txt */; };
 		D7B104FF25D2498D00E47196 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B104FE25D2498D00E47196 /* AppDelegate.swift */; };
 		D7B1050125D2498D00E47196 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B1050025D2498D00E47196 /* SceneDelegate.swift */; };
@@ -35,6 +36,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D76A9CB1261222ED00A9C210 /* Introspect in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,6 +99,9 @@
 			dependencies = (
 			);
 			name = WordScramble;
+			packageProductDependencies = (
+				D76A9CB0261222ED00A9C210 /* Introspect */,
+			);
 			productName = WordScramble;
 			productReference = D7B104FB25D2498D00E47196 /* WordScramble.app */;
 			productType = "com.apple.product-type.application";
@@ -124,6 +129,9 @@
 				Base,
 			);
 			mainGroup = D7B104F225D2498D00E47196;
+			packageReferences = (
+				D76A9CAF261222ED00A9C210 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+			);
 			productRefGroup = D7B104FC25D2498D00E47196 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -353,6 +361,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D76A9CAF261222ED00A9C210 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D76A9CB0261222ED00A9C210 /* Introspect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D76A9CAF261222ED00A9C210 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = Introspect;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D7B104F325D2498D00E47196 /* Project object */;
 }
