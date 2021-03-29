@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+var randomInt = Int.random(in: 0 ..< funnyDismissButton.count)
+let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!", "Okie dokie artichokie!", "Shore bud", "¡Cállate!", "Aw fetch!"]
+
 
 struct ContentView: View {
 	
@@ -36,9 +39,8 @@ struct ContentView: View {
 	@State private var startTime =  Date()
 	@State private var isTimerRunning = false
 	
+
 	private let timerIncreaseAmount = 10
-	
-	private let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!", "Okie dokie artichokie!", "Shore bud", "¡Cállate!", "Aw fetch!"]
 	
 	var body: some View {
 		NavigationView {
@@ -92,7 +94,6 @@ struct ContentView: View {
 					nextWord()
 				}
 				.alert(isPresented: $showingWordError) {
-					let randomInt = Int.random(in: 0..<funnyDismissButton.count)
 					return Alert(title: Text(errorTitle), message: Text(errorMessage), dismissButton: .default(Text(funnyDismissButton[randomInt])))
 				}
 				
@@ -115,12 +116,12 @@ struct ContentView: View {
 					}
 					.alert(isPresented: $showingGameOver) {
 						
-						Alert(title: Text("Game Over..."), message: Text("You ran out of time. \n\(scoreMessage)"), dismissButton: .default(Text(funnyDismissButton[Int.random(in: 0..<funnyDismissButton.count)])) {
-							score = 0
-							userWord = ""
-							nextWord()
-							timer = MyTimer()
-							timeRemaining = 60
+						Alert(title: Text("Game Over..."), message: Text("You ran out of time. \n\(scoreMessage)"), dismissButton: .default(Text(funnyDismissButton[randomInt])) {
+								score = 0
+								userWord = ""
+								nextWord()
+								timer = MyTimer()
+								timeRemaining = 60
 						})
 					})
 		}
@@ -200,8 +201,18 @@ struct ContentView: View {
 	func wordError(title: String, message: String) {
 		errorTitle = title
 		errorMessage = message + "\n" + "score decremented"
-		showingWordError = true
+		showWordErrorAlert()
 		score -= 1
+	}
+	
+	func showWordErrorAlert() {
+		randomInt = Int.random(in: 0 ..< funnyDismissButton.count)
+		showingWordError = true
+	}
+	
+	func showGameOverAlert() {
+		showingGameOver = true
+		randomInt = Int.random(in: 0 ..< funnyDismissButton.count)
 	}
 	
 	func incrementTimer() {
@@ -239,7 +250,7 @@ struct ContentView: View {
 		} else {
 			scoreMessage = "Your score was: \(score)"
 		}
-		showingGameOver = true
+		showGameOverAlert()
 	}
 	
 }
