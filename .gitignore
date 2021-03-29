@@ -1,0 +1,10 @@
+UserInterfaceState.xcuserstate
+Breakpoints_v2.xcbkptlist
+.DS_Store
+# unix swap file
+*.swp
+*.swo
+# potential log files
+*.log
+*.iml
+*.o
