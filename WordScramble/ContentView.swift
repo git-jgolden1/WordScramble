@@ -101,7 +101,9 @@ struct ContentView: View {
 					nextWord()
 				}
 				.alert(isPresented: $showingWordError) {
-					return Alert(title: Text(errorTitle), message: Text(errorMessage), dismissButton: .default(Text(funnyDismissButton[randomInt])))
+					return Alert(title: Text(errorTitle), message: Text(errorMessage), dismissButton: .default(Text(funnyDismissButton[randomInt])) {
+						userWord = ""
+					})
 				}
 				
 			}
@@ -138,6 +140,7 @@ struct ContentView: View {
 	func newWord() {
 		showingNewWordAskConfirmation = true
 		score = 0
+		userWord = ""
 		timer = MyTimer()
 		timeRemaining = 30
 		nextWord()
