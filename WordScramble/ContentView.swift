@@ -30,19 +30,15 @@ struct ContentView: View {
 	@State private var errorMessage = ""
 	@State private var showingWordError = false
 	
-	@State private var timeRemaining = 60
+	@State private var timeRemaining = 30
 	@State private var timer = MyTimer()
 	@State private var timerString = "0.00"
 	@State private var startTime =  Date()
 	@State private var isTimerRunning = false
 	
-	private let timerBeginningTime = 60 //set to whatever timeRemaining is. But you can't just start them equal to each other
-	private let timerIncreaseAmount = 15
+	private let timerIncreaseAmount = 10
 	
-	private let funnyDismissButton = ["Fine!",
-//																		"Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!",
-//																		"Okie dokie artichokie!", "Shore bud", "¡Cállate!", "Aw fetch!"
-																	 ]
+	private let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!", "Okie dokie artichokie!", "Shore bud", "¡Cállate!", "Aw fetch!"]
 	
 	var body: some View {
 		NavigationView {
