@@ -8,6 +8,7 @@
 import SwiftUI
 import Introspect
 
+var newWordWasPressed = false
 var randomInt = Int.random(in: 0 ..< funnyDismissButton.count)
 let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!", "Okie dokie artichokie!", "Shore bud", "¡Cállate!", "Aw fetch!"]
 
@@ -27,7 +28,8 @@ struct ContentView: View {
 	@State private var highScore = 0
 	@State private var scoreMessage = ""
 	
-	@State private var showingGameInstructions = false
+	@State private var hasShownGameInstructions = false
+	@State private var showingIntro = false
 	@State private var showingGameOver = false
 	@State private var showingNewWordAskConfirmation = false
 	
@@ -38,10 +40,10 @@ struct ContentView: View {
 	@State private var timeRemaining = startingTime
 	@State private var timer = MyTimer()
 	@State private var timerString = "0.00"
-	@State private var startTime =  Date()
+	@State private var intervalStartTime =  Date()
 	@State private var isTimerRunning = false
 	
-
+	private let gameInstructions = "Make as many words using existing letters from given word! \nScore goes up for each letter formed by your word. \nScore is decreased by 1 when a rule is broken. \n1. Words must be at least 3 letters long\n2. Words must each be unique\n3. Words must be actual words"
 	private let timerIncreaseAmount = 5
 	
 	var body: some View {
@@ -50,27 +52,27 @@ struct ContentView: View {
 				HStack {
 					Button("New word") {
 						newWord()
-//						showingNewWordAskConfirmation = true
+						//						showingNewWordAskConfirmation = true
 					}
 					.foregroundColor(.green)
 					.padding()
-//					.alert(isPresented: $showingNewWordAskConfirmation) {
-//						Alert(title: Text("Warning: This will erase your score"), message: Text("Are you sure you want to add a new word?"), primaryButton: .default(Text("Yes")) {
-//							newWord()
-//						}, secondaryButton: .cancel(Text("No")))
-//					}
+					//					.alert(isPresented: $showingNewWordAskConfirmation) {
+					//						Alert(title: Text("Warning: This will erase your score"), message: Text("Are you sure you want to add a new word?"), primaryButton: .default(Text("Yes")) {
+					//							newWord()
+					//						}, secondaryButton: .cancel(Text("No")))
+					//					}
 					//above commented code not working yet for some reason
 					
 					
 					TextField("Enter your word", text: $userWord, onCommit: addNewWordToList)
 						.introspectTextField { textField in
-							if !showingGameOver && !showingWordError && !showingGameInstructions {
+							if !showingGameOver && !showingWordError && !showingIntro {
 								textField.becomeFirstResponder()
 							}
 						}
 						.textFieldStyle(RoundedBorderTextFieldStyle())
 						.autocapitalization(.none)
-						
+					
 					VStack {
 						Text("High Score: \(highScore)")
 							.foregroundColor(.purple)
@@ -81,13 +83,23 @@ struct ContentView: View {
 					}
 					.padding()
 				}
-				.alert(isPresented: $showingGameInstructions) {
-					Alert(title: Text("Game instructions"), message: Text("Make as many words using existing letters from given word! \nScore goes up for each letter formed by your word. \nScore is decreased by 1 when a rule is broken. \n1. Words must be at least 3 letters long\n2. Words must each be unique\n3. Words must be actual words"), dismissButton: .default(Text("Cool, let's play!")) {
-						if !isTimerRunning {
+				.alert(isPresented: $showingIntro) {
+					Alert(title: Text(!hasShownGameInstructions ? "Game instructions" : "On your marks, get set..."), message: Text(!hasShownGameInstructions ? gameInstructions : ""), dismissButton: .default(Text("Let's go!")) {
+						if !isTimerRunning || newWordWasPressed {
 							timerString = "0.00"
-							startTime = Date()
+							intervalStartTime = Date()
+							if !isTimerRunning {
+								isTimerRunning.toggle()
+							}
+							if newWordWasPressed {
+								timer = MyTimer()
+								newWordWasPressed = false
+							}
 						}
-						isTimerRunning.toggle()
+						
+						if !hasShownGameInstructions {
+							hasShownGameInstructions = true
+						}
 					})
 				}
 				
@@ -97,7 +109,7 @@ struct ContentView: View {
 				}
 				.navigationBarTitle(rootWord)
 				.onAppear {
-					gameInstructions()
+					showingIntro = true
 					nextWord()
 				}
 				.alert(isPresented: $showingWordError) {
@@ -112,7 +124,7 @@ struct ContentView: View {
 					Text("\(timeRemaining)")
 					.onReceive(timer.value) { _ in
 						if isTimerRunning {
-							timerString = String(format: "%.2f", (Date().timeIntervalSince(startTime)))
+							timerString = String(format: "%.2f", (Date().timeIntervalSince(intervalStartTime)))
 							if timeRemaining > 0 {
 								timeRemaining -= 1
 							} else if timeRemaining <= 0 {
@@ -126,11 +138,12 @@ struct ContentView: View {
 					.alert(isPresented: $showingGameOver) {
 						
 						Alert(title: Text("Game Over..."), message: Text("You ran out of time. \n\(scoreMessage)"), dismissButton: .default(Text(funnyDismissButton[randomInt])) {
-								score = 0
-								userWord = ""
-								nextWord()
-								timer = MyTimer()
-								timeRemaining = startingTime
+							score = 0
+							userWord = ""
+							nextWord()
+							timer = MyTimer()
+							timeRemaining = startingTime
+							showingIntro = true
 						})
 					})
 		}
@@ -138,11 +151,13 @@ struct ContentView: View {
 	}
 	
 	func newWord() {
-		showingNewWordAskConfirmation = true
+		//		showingNewWordAskConfirmation = true
+		newWordWasPressed = true
+		timeRemaining = startingTime
+		timer.value.upstream.connect().cancel()
+		showingIntro = true
 		score = 0
 		userWord = ""
-		timer = MyTimer()
-		timeRemaining = 30
 		nextWord()
 	}
 	
@@ -249,10 +264,6 @@ struct ContentView: View {
 		fatalError("Could not load start.txt from bundle.")
 	}
 	
-	func gameInstructions() {
-		showingGameInstructions = true
-	}
-	
 	func gameOver() {
 		if score > highScore {
 			highScore = score
@@ -260,6 +271,7 @@ struct ContentView: View {
 		} else {
 			scoreMessage = "Your score was: \(score)"
 		}
+		isTimerRunning = false
 		showGameOverAlert()
 	}
 	
