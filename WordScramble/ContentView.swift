@@ -122,6 +122,7 @@ struct ContentView: View {
 			.navigationBarItems(
 				trailing:
 					Text("\(timeRemaining)")
+					.foregroundColor(calculateTimerColor())
 					.onReceive(timer.value) { _ in
 						if isTimerRunning {
 							timerString = String(format: "%.2f", (Date().timeIntervalSince(intervalStartTime)))
@@ -264,6 +265,16 @@ struct ContentView: View {
 			}
 		}
 		fatalError("Could not load start.txt from bundle.")
+	}
+	
+	func calculateTimerColor() -> Color {
+		if timeRemaining > 5 && timeRemaining < 60 {
+			return .black
+		} else if timeRemaining >= 60 {
+			return .green
+		} else {
+			return .red
+		}
 	}
 	
 	func gameOver() {
