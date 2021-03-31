@@ -64,7 +64,7 @@ struct ContentView: View {
 					//above commented code not working yet for some reason
 					
 					
-					TextField("Enter your word", text: $userWord, onCommit: addNewWordToList)
+					TextField("Enter words", text: $userWord, onCommit: addNewWordToList)
 						.introspectTextField { textField in
 							if !showingGameOver && !showingWordError && !showingIntro {
 								textField.becomeFirstResponder()
@@ -224,10 +224,12 @@ struct ContentView: View {
 	}
 	
 	func wordError(title: String, message: String) {
-		errorTitle = title
-		errorMessage = message + "\n" + "score decremented"
-		showWordErrorAlert()
-		score -= 1
+		if timeRemaining > 0 {
+			errorTitle = title
+			errorMessage = message + "\n" + "score decremented"
+			showWordErrorAlert()
+			score -= 1
+		}
 	}
 	
 	func showWordErrorAlert() {
