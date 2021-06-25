@@ -10,7 +10,7 @@ import Introspect
 
 var newWordWasPressed = false
 var randomInt = Int.random(in: 0 ..< funnyDismissButton.count)
-let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!", "Okie dokie artichokie!", "Shore bud", "¡Cállate!", "Aw fetch!"]
+let funnyDismissButton = ["Fine!", "Dang it!", "Well that stinks...", "Oh good grief", "I'm smart, I promise!", "Okie dokie artichokie!", "Shore bud", "¡Cállate!", "Aw fetch!", "How quaint", "Tapping away my troubles", "Blimey!", "Crikey!", "Lit, yo!", "Cha dude!"]
 
 let startingTime = 30
 
@@ -50,19 +50,22 @@ struct ContentView: View {
 		NavigationView {
 			VStack {
 				HStack {
-					Button("New word") {
-						newWord()
-						//						showingNewWordAskConfirmation = true
+					VStack {
+						Button(action: {newWord()} ) {
+							Text("New word")
+								.padding(3)
+								.foregroundColor(.green)
+						}
+						.background(Capsule().stroke(lineWidth: 1)).foregroundColor(.green)
+						
+						Button(action: {gameOver()} ) {
+							Text("Give up")
+								.padding(3)
+								.foregroundColor(.red)
+						}
+						.background(RoundedRectangle(cornerRadius: 10, style: .continuous))
 					}
-					.foregroundColor(.green)
 					.padding()
-					//					.alert(isPresented: $showingNewWordAskConfirmation) {
-					//						Alert(title: Text("Warning: This will erase your score"), message: Text("Are you sure you want to add a new word?"), primaryButton: .default(Text("Yes")) {
-					//							newWord()
-					//						}, secondaryButton: .cancel(Text("No")))
-					//					}
-					//above commented code not working yet for some reason
-					
 					
 					TextField("Enter words", text: $userWord, onCommit: addNewWordToList)
 						.introspectTextField { textField in
@@ -83,6 +86,7 @@ struct ContentView: View {
 					}
 					.padding()
 				}
+				.font(.system(size: 15))
 				.alert(isPresented: $showingIntro) {
 					Alert(title: Text(!hasShownGameInstructions ? "Game instructions" : "On your marks, get set..."), message: Text(!hasShownGameInstructions ? gameInstructions : ""), dismissButton: .default(Text("Let's go!")) {
 						if !isTimerRunning || newWordWasPressed {
@@ -138,7 +142,7 @@ struct ContentView: View {
 					}
 					.alert(isPresented: $showingGameOver) {
 						
-						Alert(title: Text("Game Over..."), message: Text("You ran out of time. \n\(scoreMessage)"), dismissButton: .default(Text(funnyDismissButton[randomInt])) {
+						Alert(title: Text("Game Over..."), message: Text("You ran out of time. \n\(scoreMessage)"), dismissButton: .default(Text("I'm at a loss for words")) {
 							score = 0
 							userWord = ""
 							nextWord()
